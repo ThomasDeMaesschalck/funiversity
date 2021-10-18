@@ -14,11 +14,13 @@ public class CourseService {
 
     private final CourseMapper courseMapper;
     private final CourseRepository courseRepository;
+    private final ProfessorService professorService;
 
     @Autowired
-    public CourseService(CourseMapper courseMapper, CourseRepository courseRepository) {
+    public CourseService(CourseMapper courseMapper, CourseRepository courseRepository, ProfessorService professorService) {
         this.courseMapper = courseMapper;
         this.courseRepository = courseRepository;
+        this.professorService = professorService;
     }
 
     public List<CourseDTO> getAll() {
@@ -30,6 +32,11 @@ public class CourseService {
     }
 
     public Course save(CourseDTO courseDTO) {
+        try {
+            professorService.findById(courseDTO.getProfessor().getId());
+        } catch (IllegalArgumentException exception) {
+            throw new IllegalArgumentException("Professor with id " + courseDTO.getProfessor().getId() + " does not exist.");
+        }
         return courseRepository.save(courseMapper.toCourse(courseDTO));
     }
 }
