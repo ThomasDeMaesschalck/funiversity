@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/courses")
@@ -29,13 +30,13 @@ public class CourseController {
 
     @GetMapping(produces = "application/json")
     @ResponseStatus(HttpStatus.OK)
-    public List<CourseDTO> getAllCourses(@RequestParam(required = false) String studyPoints) {
-        if (studyPoints == null) {
-            logger.info("Retrieved all courses");
+    public List<CourseDTO> getAllCourses(@RequestParam Optional<Integer> studyPoints) {
+        if (studyPoints.isEmpty()) {
+            logger.info("Retrieving all courses");
             return courseService.getAll();
         } else {
-            logger.info("Retrieved all courses with study points " + studyPoints);
-            return courseService.getAllWithStudyPointsEqualTo(Integer.parseInt(studyPoints));
+            logger.info("Retrieving all courses with study points " + studyPoints.get());
+            return courseService.getAllWithStudyPointsEqualTo(studyPoints.get());
         }
     }
 
