@@ -31,13 +31,14 @@ public class CourseController {
     @GetMapping(produces = "application/json")
     @ResponseStatus(HttpStatus.OK)
     public List<CourseDTO> getAllCourses(@RequestParam Optional<Integer> studyPoints) {
-        if (studyPoints.isEmpty()) {
-            logger.info("Retrieving all courses");
-            return courseService.getAll();
-        } else {
+
+        if (studyPoints.isPresent()) {
             logger.info("Retrieving all courses with study points " + studyPoints.get());
             return courseService.getAllWithStudyPointsEqualTo(studyPoints.get());
         }
+
+        logger.info("Retrieving all courses");
+        return courseService.getAll();
     }
 
     @PostMapping(consumes = "application/json", produces = "application/json")
